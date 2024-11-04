@@ -9,69 +9,87 @@
 A plymouth animation, derived from <a href="https://vega-gaming.de/">VEGA's</a> logo.
 
 ![gif](https://github.com/B0redBanana/vega-plymouth/blob/8697b7d5202bf335ef6f1677ece687d5e6515028/preview/logo.gif)
+
 </p>
 
-### What is plymouth?
+### What is Plymouth?
 
 [Plymouth](http://www.freedesktop.org/wiki/Software/Plymouth) is a project from Fedora and now listed among the [freedesktop.org's official resources](https://www.freedesktop.org/wiki/Software/#graphicsdriverswindowsystemsandsupportinglibraries) providing a flicker-free graphical boot process. It relies on [kernel mode setting](https://wiki.archlinux.org/index.php/Kernel_mode_setting) (KMS) to set the native resolution of the display as early as possible, then provides an eye-candy splash screen leading all the way up to the login manager.
 
-### How to set it up?
+### Prerequisite
 
-[Click here](https://wiki.archlinux.org/index.php/plymouth) for an article on the Archwiki and [here](https://wiki.ubuntu.com/Plymouth) for the Ubuntuwiki.
+To use the theme, you need to have Plymouth installed and configured on your system. For help with that, please refer to your distribution's wiki.
 
-### How to get these themes?
+- [ArchWiki: Plymouth](https://wiki.archlinux.org/title/Plymouth) 
 
-**Download and extract** 
+- [Ubuntu Wiki: Plymouth](https://wiki.ubuntu.com/Plymouth)
 
-**or clone using:**
+Fedora users can refer to the ArchWiki as well!
+
+### Download
+
+Download and extract the zip archive
+
+or clone using:
+
 ```bash
 git clone https://github.com/B0redBanana/vega-plymouth.git
 ```
 
-### How to use these themes?
+### Installation
 
-**Install using the script** 
-Once it's downloaded, run the install script and follow the instructions. It'll ask you for the path, your distro and preferred size!
+**Using the Installation script**
 
-**Install manually** (We're using the small version in this case, replace small with either medium or large, if desired)
+1. Navigate to the downloaded directory:
+   
+   ```bash
+   cd vega-plymouth
+   ```
 
-+ For **Arch-based** distros
+2. Run the Installation script
+   
+   ```bash
+   ./install.sh
+   ```
+
+3. Follow the on-screen instructions
+
+**Manual installation**
+
+This example is using the small version; replace "small" with "medium" or "large" as needed):
+
+1. Change directory into the folder containing the themes
+
 ```bash
-# Make sure Plymouth is installed and set up
-
-#cd inside the folder containing the themes
 cd vega-plymouth/vega
-
-# Copying the theme into Plymouth's folder
-sudo cp -r vega-small /usr/share/plymouth/themes/
-
-# Set the theme as default
-sudo plymouth-set-default-theme -R vega-plymouth-small
-
 ```
-+ For **Debian** based distros
+
+2. Copy the desired theme into the plymouth folder
+
 ```bash
-# Make sure Plymouth is installed and set up
-
-#cd inside the folder containing the themes
-cd vega-plymouth/vega
-
-# Copying the theme into Plymouth's folder
 sudo cp -r vega-small /usr/share/plymouth/themes/
+```
 
-# Install the theme
+3. Set the theme as your default:
+
+For *ArchLinux & Fedora*: 
+
+```bash
+sudo plymouth-set-default-theme -R vega-small
+```
+
+For *Debian & Ubuntu*: 
+
+```bash
 sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vega-small/vega-small.plymouth 100
 
-# Choose the theme you want to use
 sudo update-alternatives --config default.plymouth
+```
 
-# Then update initramfs
-sudo update-initramfs -u
-``` 
-
-
+4. Update your initramfs
 
 ### Important info
-+ This was created with a resolution of 1920x1080
-+ Feel free to leave suggestions or report any issues!
-+ I can't get this to work with an ecrypted drive at the moment! Help would be appreciated!
+
++ This was created with resolution of 1920x1080
++ This is my first bash script. Please leave suggestions and report any issues
++ I have not tested this on an encrypted drive yet
