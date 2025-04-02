@@ -1,28 +1,5 @@
 #!/usr/bin/env bash
 
-## Checking for elevated privileges
-
-if [ "$EUID" -ne 0 ]; then
-    echo
-    echo "This script requires sudo privileges. Restarting with sudo..."
-    sudo "$0" "$@"
-    exit
-fi
-
-## Function for initramfs regeneration
-
-create_new_initramfs() {
-    if type update-initramfs &>/dev/null; then
-        update-initramfs -u &>/dev/null
-    elif type mkinitcpio &>/dev/null; then
-        mkinitcpio -P &>/dev/null
-    elif type dracut &>/dev/null; then
-        dracut --force --verbose --kver "$(uname -r)"
-    else
-        echo "Warning: Could not rebuild initramfs!"
-    fi
-}
-
 # Time to start the installer!
 
 clear
@@ -53,161 +30,184 @@ done
 
 DIR=$(pwd)
 
-#clear
+read -p "1: Arch, 2: Debian, 3: Ubuntu, 4: Fedora: " DISTRO
 
-while true; do
-    read -rp "
-1: ArchLinux
-2: Debian/Ubuntu
-3: Fedora
+case $DISTRO in
 
-Please choose your base distribution: " DISTRO
+############
+### ARCH ###
+############
 
-    case $DISTRO in
-
-    1 | 3)
-        echo
-        echo "Pick your preferred resolution:"
-        read -rp "
-    1: Small (270x270px)
-    2: Medium (540x540px)
-    3: Large (1080x1080px): " size_select
-        if test -z "$size_select"; then
-            size_select=1
-        fi
-        case "$size_select" in
         1)
-            echo
-            echo "Installing 270x270px Option"
-            echo
-            cd "$DIR/vega" || exit
-            cp -r vega-small "$location/"
-            sleep 1
-            echo "Files moved. Setting chosen theme as default."
-            echo
-            plymouth-set-default-theme -R vega-small
-            sleep 1
-            echo "Theme set. Updating initramfs"
-            echo
-            sleep 1
+            echo "Choose a Resolution:"
+            read -p "1: Small (270x270px), 2: Medium (540x540px), 3: Large (1080x1080px): " size_select
+            if test -z "$size_select";
+            then
+                size_select=1
+            fi
+            case "$size_select" in
+            1)
+                echo "Installing Small Resolution"
+                cd $DIR/vega
+                sudo cp -r vega-small /usr/share/plymouth/themes/
+                sudo plymouth-set-default-theme -R vega-small
+                ;;
+            2)
+                echo "Installing Medium Resolution"
+                cd $DIR/vega
+                sudo cp -r vega-medium /usr/share/plymouth/themes/
+                sudo plymouth-set-default-theme -R vega-medium
+                ;;
+            3)
+                echo "Installing Large Resolution"
+                cd $DIR/vega
+                sudo cp -r vega-large /usr/share/plymouth/themes/
+                sudo plymouth-set-default-theme -R vega-large
+                ;;
+            esac
+
             create_new_initramfs
+
             ;;
+
+##############
+### DEBIAN ###
+##############
+
         2)
-            echo
-            echo "Installing 540x540px Option"
-            echo
-            cd "$DIR/vega" || exit
-            cp -r vega-medium "$location/"
-            sleep 1
-            echo "Files moved. Setting chosen theme as default."
-            echo
-            plymouth-set-default-theme -R vega-medium
-            sleep 1
-            echo "Theme set. Updating initramfs"
-            echo
-            sleep 1
-            create_new_initramfs
-            ;;
+
+            echo "Choose a Resolution:"
+            read -p "1: Small (270x270px), 2: Medium (540x540px), 3: Large (1080x1080px): " size_select
+            if test -z "$size_select";
+            then
+                size_select=1
+            fi
+
+            case "$size_select" in
+                1)
+                    echo "Installing Small Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-small /usr/share/plymouth/themes/
+                    sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vega-small/vega-small.plymouth 100
+                    ;;
+                2)
+                    echo "Installing Medium Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-medium /usr/share/plymouth/themes/
+                    sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vega-medium/vega-medium.plymouth 100
+                    ;;
+                3)
+                    echo "Installing Large Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-large /usr/share/plymouth/themes/
+                    sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vega-large/vega-large.plymouth 100
+                    ;;
+            esac
+            
+            
+                echo "Running update-alternatives"
+                sudo update-alternatives --config default.plymouth
+
+create_new_initramfs
+
+##############
+### Ubuntu ###
+##############
+
         3)
-            echo
-            echo "Installing 1080x1080px Option"
-            echo
-            cd "$DIR/vega" || exit
-            cp -r vega-large "$location/"
-            sleep 1
-            echo "Files moved. Setting chosen theme as default."
-            echo
-            plymouth-set-default-theme -R vega-large
-            sleep 1
-            echo "Theme set. Updating initramfs"
-            echo
-            sleep 1
-            create_new_initramfs
-            ;;
-        esac
-        ;;
 
-    2)
-        echo
-        echo "Pick your preferred resolution:"
-        read -rp "
-    1: Small (270x270px)
-    2: Medium (540x540px)
-    3: Large (1080x1080px): " size_select
-        if test -z "$size_select"; then
-            size_select=1
-        fi
+            echo "Choose a Resolution:"
+            read -p "1: Small (270x270px), 2: Medium (540x540px), 3: Large (1080x1080px): " size_select
+            if test -z "$size_select";
+            then
+                size_select=1
+            fi
 
-        case "$size_select" in
-        1)
-            echo
-            echo "Installing 270x270px Option"
-            echo
-            cd "$DIR/vega" || exit
-            cp -r vega-small "$location/"
-            sleep 1
-            echo "Files moved. Setting chosen theme as default."
-            echo
-            update-alternatives --install $location/default.plymouth default.plymouth $location/vega-small/vega-small.plymouth 100
-            sleep 1
-            echo "Theme set. Updating initramfs"
-            echo
-            sleep 1
-            create_new_initramfs
-            ;;
-        2)
-            echo
-            echo "Installing 540x540px Option"
-            echo
-            cd "$DIR/vega" || exit
-            cp -r vega-medium "$location/"
-            sleep 1
-            echo "Files moved. Setting chosen theme as default."
-            echo
-            update-alternatives --install $location/default.plymouth default.plymouth $location/vega-medium/vega-medium.plymouth 100
-            sleep 1
-            echo "Theme set. Updating initramfs"
-            echo
-            sleep 1
-            create_new_initramfs
-            ;;
-        3)
-            echo
-            echo "Installing 1080x1080px Option"
-            echo
-            cd "$DIR/vega" || exit
-            cp -r vega-large "$location/"
-            sleep 1
-            echo "Files moved. Setting chosen theme as default."
-            echo
-            update-alternatives --install $location/default.plymouth default.plymouth $location/vega-large/vega-large.plymouth 100
-            sleep 1
-            echo "Theme set. Updating initramfs"
-            echo
-            sleep 1
-            create_new_initramfs
-            ;;
-        esac
-        ;;
+            case "$size_select" in
+                1)
+                    echo "Installing Small Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-small /usr/share/plymouth/themes/
+                    sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vega-small/vega-small.plymouth 100
+                    ;;
+                2)
+                    echo "Installing Medium Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-medium /usr/share/plymouth/themes/
+                    sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vega-medium/vega-medium.plymouth 100
+                    ;;
+                3)
+                    echo "Installing Large Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-large /usr/share/plymouth/themes/
+                    sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vega-large/vega-large.plymouth 100
+                    ;;
+            esac
+            
+            
+                echo "Running update-alternatives"
+                sudo update-alternatives --config default.plymouth
 
-    *)
-        echo
-        echo "Invalid option. Please enter 1, 2, or 3."
-        continue
-        ;;
+create_new_initramfs
 
-    esac
-    break
-done
+##############
+### Fedora ###
+##############
 
-echo
-read -rp "Do you want to go back and install another default resolution? (y/n): " continue_choice
-if [[ ! "$continue_choice" =~ ^[Yy]$ ]]; then
-    echo
-    echo "Bye!"
-    echo
-    echo "Thank you for downloading! :)"
-    echo
-    sleep 1
-    exit 0
-fi
+        4)
+
+            echo "Choose a Resolution:"
+            read -p "1: Small (270x270px), 2: Medium (540x540px), 3: Large (1080x1080px): " size_select
+            if test -z "$size_select";
+            then
+                size_select=1
+            fi
+
+            case "$size_select" in
+                1)
+                    echo "Installing Small Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-small /usr/share/plymouth/themes/
+                    sudo plymouth-set-default-theme vega-small -R
+                    ;;
+                2)
+                    echo "Installing Medium Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-medium /usr/share/plymouth/themes/
+                    sudo plymouth-set-default-theme vega-medium -R
+                    ;;
+                3)
+                    echo "Installing Large Resolution"
+                    cd $DIR/vega
+                    sudo cp -r vega-large /usr/share/plymouth/themes/
+                    sudo plymouth-set-default-theme vega-large -R
+                    ;;
+            esac
+            
+                echo "Setting Theme as Default"
+                sudo update-alternatives --config default.plymouth
+
+create_new_initramfs
+
+esac
+
+echo "Done!"
+
+
+#################
+### FUNCTIONS ###
+#################
+
+                
+                create_new_initramfs() {
+                echo "Refreshing Initramfs"
+                if type update-initramfs &>/dev/null; then
+                    update-initramfs -u &>/dev/null  
+                elif type mkinitcpio &>/dev/null; then
+                    mkinitcpio -P &>/dev/null
+                elif type dracut &>/dev/null; then
+                    dracut -f &>/dev/null
+                else
+                    echo "Warning: Could not rebuild initramfs!"
+                fi
+                }
