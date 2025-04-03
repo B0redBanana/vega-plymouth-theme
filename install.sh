@@ -34,10 +34,6 @@ read -p "1: Arch, 2: Debian, 3: Ubuntu, 4: Fedora: " DISTRO
 
 case $DISTRO in
 
-############
-### ARCH ###
-############
-
         1)
             echo "Choose a Resolution:"
             read -p "1: Small (270x270px), 2: Medium (540x540px), 3: Large (1080x1080px): " size_select
@@ -64,7 +60,7 @@ case $DISTRO in
                 sudo cp -r vega-large /usr/share/plymouth/themes/
                 sudo plymouth-set-default-theme -R vega-large
                 ;;
-            esac
+        esac
 
             create_new_initramfs
 
@@ -110,6 +106,8 @@ case $DISTRO in
 
 create_new_initramfs
 
+;;
+
 ##############
 ### Ubuntu ###
 ##############
@@ -149,7 +147,7 @@ create_new_initramfs
                 sudo update-alternatives --config default.plymouth
 
 create_new_initramfs
-
+;;
 ##############
 ### Fedora ###
 ##############
@@ -188,6 +186,7 @@ create_new_initramfs
                 sudo update-alternatives --config default.plymouth
 
 create_new_initramfs
+;;
 
 esac
 
@@ -198,7 +197,6 @@ echo "Done!"
 ### FUNCTIONS ###
 #################
 
-                
                 create_new_initramfs() {
                 echo "Refreshing Initramfs"
                 if type update-initramfs &>/dev/null; then
