@@ -104,3 +104,4 @@ sudo dracut -f
 + This was created with resolution of 1920x1080
 + Since this is my first Bash script, feedback is welcome.
 + I have not tested this on a LUKS encrypted drive yet
++ This is my first actual GitHub project, so if anyone has tips and feedback and how to properly do things, please let me know :)
