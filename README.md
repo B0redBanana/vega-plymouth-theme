@@ -62,7 +62,7 @@ This example is using the small version; replace "small" with "medium" or "large
 1. Change into the directory containing the themes
 
 ```bash
-cd vega-plymouth/vega
+cd vega-plymouth-theme
 ```
 
 2. Copy the desired theme into the Plymouth folder
