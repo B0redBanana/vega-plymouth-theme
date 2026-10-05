@@ -15,7 +15,7 @@ if [ "$EUID" -ne 0 ]; then
     exit
 fi
 
-dir="$(pwd)"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 #################
 ### FUNCTIONS ###
