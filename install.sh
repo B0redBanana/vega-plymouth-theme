@@ -44,7 +44,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
                 echo "Installing $theme"
 
                 if [[ ! -d "$SCRIPT_DIR/vega/$theme" ]]; then
-                echo "Theme directory '$theme' not found."
+                echo "Error: Theme directory '$theme' not found."
                 exit 1
                 fi
 
@@ -67,7 +67,7 @@ echo
 
 read -rp "Select [1-4]: " DISTRO
 
-case "$DISTRO" in
+case "$distro" in
     1|2|3) ;;
     *)
         echo "Invalid selection"
@@ -105,7 +105,7 @@ esac
 
 ### Starting Installation ###
 
-case $DISTRO in
+case $distro in
 
 ##############
 ###  Arch  ###
