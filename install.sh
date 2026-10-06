@@ -27,12 +27,15 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
                     if command -v update-initramfs &>/dev/null; then
                         echo "Using update-initramfs..."
                         update-initramfs -u
+
                     elif command -v mkinitcpio &>/dev/null; then
                         echo "Using mkinitcpio..."
                         mkinitcpio -P
+
                     elif command -v dracut &>/dev/null; then
                         echo "Using dracut..."
                         dracut -f
+
                     else
                         echo "Error: Could not rebuild initramfs!"
                         exit 1
@@ -44,22 +47,24 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
                 }
 
                 install_theme() {
-                echo "Installing $theme"
+                    echo "Installing $theme"
 
-                if [[ ! -d "$SCRIPT_DIR/vega/$theme" ]]; then
-                echo "Error: Theme directory '$theme' not found."
-                exit 1
-                fi
+                    if [[ ! -d "$SCRIPT_DIR/vega/$theme" ]]; then
+                        echo "Error: Theme directory '$theme' not found."
+                        exit 1
+                    fi
 
-                echo "Installing $theme to /usr/share/plymouth/themes/$theme"
-                cp -r "$SCRIPT_DIR/vega/$theme" "/usr/share/plymouth/themes/$theme"
+                    echo "Installing $theme to /usr/share/plymouth/themes/$theme"
+                    cp -r "$SCRIPT_DIR/vega/$theme" "/usr/share/plymouth/themes/$theme"
                 }
 
+echo
 echo "================================="
 echo "  VEGA Plymouth Theme Installer  "
 echo "================================="
 echo
 
+echo
 echo "Choose your Distribution:"
 echo "1) Arch"
 echo "2) Debian / Ubuntu"
@@ -74,12 +79,15 @@ case "$distro" in
     1)
         distro_name="Arch"
         ;;
+
     2)
         distro_name="Debian / Ubuntu"
         ;;
+
     3)
         distro_name="Fedora"
         ;;
+
     *)
         echo "Invalid selection."
         exit 1
@@ -104,14 +112,17 @@ case "$size_select" in
         theme="vega-small"
         resolution="270x270px"
         ;;
+
     2)
         theme="vega-medium"
         resolution="540x540px"
         ;;
+
     3)
         theme="vega-large"
         resolution="1080x1080px"
         ;;
+
     *)
         echo "Invalid selection. Defaulting to Small (270x270px)"
         theme="vega-small"
@@ -156,12 +167,13 @@ case $distro in
 
         1)
             install_theme
-            plymouth-set-default-theme "$theme"
-            echo
-            echo "Setting Theme as Default"
-            echo
+                plymouth-set-default-theme "$theme"
 
-create_new_initramfs
+                echo
+                echo "Setting Theme as Default"
+                echo
+
+            create_new_initramfs
 ;;
 
 ##############
@@ -170,19 +182,22 @@ create_new_initramfs
 
         2)
             install_theme
-            update-alternatives \
-                --install \
-                /usr/share/plymouth/themes/default.plymouth \
-                default.plymouth \
-                /usr/share/plymouth/themes/"$theme"/"$theme".plymouth \
-                100
-            echo "Running update-alternatives"
-            echo
-            echo "Please choose the number corresponding to the installed theme."
-            echo 
-            update-alternatives --config default.plymouth
+                update-alternatives \
+                    --install \
+                    /usr/share/plymouth/themes/default.plymouth \
+                    default.plymouth \
+                    /usr/share/plymouth/themes/"$theme"/"$theme".plymouth \
+                    100
 
-create_new_initramfs
+                echo    
+                echo "Running update-alternatives"
+                echo
+                echo "Please choose the number corresponding to the installed theme."
+                echo
+
+                update-alternatives --config default.plymouth
+
+            create_new_initramfs
 ;;
 
 ##############
@@ -191,12 +206,13 @@ create_new_initramfs
 
         3)
             install_theme
-            plymouth-set-default-theme "$theme"            
-            echo
-            echo "Setting Theme as Default"
-            echo
+                plymouth-set-default-theme "$theme"
 
-create_new_initramfs
+                echo
+                echo "Setting Theme as Default"
+                echo
+
+            create_new_initramfs
 ;;
 
 esac
