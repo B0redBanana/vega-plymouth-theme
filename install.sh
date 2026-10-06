@@ -71,9 +71,17 @@ echo
 read -rp "Select [1-3]: " distro
 
 case "$distro" in
-    1|2|3) ;;
+    1)
+        distro_name="Arch"
+        ;;
+    2)
+        distro_name="Debian / Ubuntu"
+        ;;
+    3)
+        distro_name="Fedora"
+        ;;
     *)
-        echo "Invalid selection"
+        echo "Invalid selection."
         exit 1
         ;;
 esac
@@ -94,16 +102,47 @@ size_select=${size_select:-1}
 case "$size_select" in
     1)
         theme="vega-small"
+        resolution="270x270px"
         ;;
     2)
         theme="vega-medium"
+        resolution="540x540px"
         ;;
     3)
         theme="vega-large"
+        resolution="1080x1080px"
         ;;
     *)
-        echo "Invalid selection. Defaulting to Small (270x270)"
+        echo "Invalid selection. Defaulting to Small (270x270px)"
         theme="vega-small"
+        resolution="270x270px"
+        ;;
+esac
+
+echo
+echo "==========="
+echo "  Summary  "
+echo "==========="
+echo
+echo "Distribution : $distro_name"
+echo "Resolution   : $resolution"
+echo
+
+read -rp "Continue with installation? [Y/n]: " confirm
+confirm=${confirm:-Y}
+
+case "$confirm" in
+    [Yy]|[Yy][Ee][Ss])
+        ;;
+    [Nn]|[Nn][Oo])
+        echo
+        echo "Installation cancelled."
+        exit 0
+        ;;
+    *)
+        echo
+        echo "Invalid choice. Installation cancelled."
+        exit 1
         ;;
 esac
 
