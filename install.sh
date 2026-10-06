@@ -65,7 +65,7 @@ echo
 
 ### Getting Distro ###
 
-read -rp "Select [1-4]: " DISTRO
+read -rp "Select [1-4]: " distro
 
 case "$distro" in
     1|2|3) ;;
