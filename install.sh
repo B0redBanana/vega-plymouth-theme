@@ -131,7 +131,12 @@ create_new_initramfs
 
         2)
             install_theme
-            update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/"$theme"/"$theme".plymouth 100
+            update-alternatives \
+                --install \
+                /usr/share/plymouth/themes/default.plymouth \
+                default.plymouth \
+                /usr/share/plymouth/themes/"$theme"/"$theme".plymouth \
+                100
             echo "Running update-alternatives"
             echo
             echo "Please choose the number corresponding to the installed theme."
