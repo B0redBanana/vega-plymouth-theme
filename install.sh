@@ -43,13 +43,13 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
                 install_theme() {
                 echo "Installing $theme"
 
-                if [[ ! -d "$dir/vega/$theme" ]]; then
+                if [[ ! -d "$SCRIPT_DIR/vega/$theme" ]]; then
                 echo "Theme directory '$theme' not found."
                 exit 1
                 fi
 
                 echo "Installing $theme to /usr/share/plymouth/themes/$theme"
-                cp -r "$dir/vega/$theme" "/usr/share/plymouth/themes/$theme"
+                cp -r "$SCRIPT_DIR/vega/$theme" "/usr/share/plymouth/themes/$theme"
                 }
 
 echo "================================="
