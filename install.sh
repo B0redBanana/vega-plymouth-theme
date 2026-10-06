@@ -15,65 +15,89 @@ if [ "$EUID" -ne 0 ]; then
     exit
 fi
 
-dir="$(pwd)"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 
 #################
 ### FUNCTIONS ###
 #################
 
                 create_new_initramfs() {
-                    echo "Refreshing Initramfs"
+                    echo "Refreshing initramfs"
                     
                     if command -v update-initramfs &>/dev/null; then
-                            update-initramfs -u &>/dev/null  
-                            elif command -v mkinitcpio &>/dev/null; then
-                            mkinitcpio -P &>/dev/null
-                            elif command -v dracut &>/dev/null; then
-                            dracut -f &>/dev/null
-                            else
-                        echo "Warning: Could not rebuild initramfs!"
+                        echo "Using update-initramfs..."
+                        update-initramfs -u
+
+                    elif command -v mkinitcpio &>/dev/null; then
+                        echo "Using mkinitcpio..."
+                        mkinitcpio -P
+
+                    elif command -v dracut &>/dev/null; then
+                        echo "Using dracut..."
+                        dracut -f
+
+                    else
+                        echo "Error: Could not rebuild initramfs!"
+                        exit 1
                     fi
+
+                        echo
+                        echo "Initramfs successfully rebuilt."
+
                 }
 
                 install_theme() {
-                echo "Installing $theme"
+                    echo "Installing $theme"
 
-                if [[ ! -d "$dir/vega/$theme" ]]; then
-                echo "Theme directory '$theme' not found."
-                exit 1
-                fi
+                    if [[ ! -d "$SCRIPT_DIR/vega/$theme" ]]; then
+                        echo "Error: Theme directory '$theme' not found."
+                        exit 1
+                    fi
 
-                echo "Installing $theme to /usr/share/plymouth/themes/$theme"
-                cp -r "$dir/vega/$theme" "/usr/share/plymouth/themes/$theme"
+                    echo "Installing $theme to /usr/share/plymouth/themes/$theme"
+                    cp -r "$SCRIPT_DIR/vega/$theme" "/usr/share/plymouth/themes/$theme"
                 }
 
+echo
 echo "================================="
 echo "  VEGA Plymouth Theme Installer  "
 echo "================================="
 echo
 
-echo "Please choose your Distribution:"
+echo
+echo "Choose your Distribution:"
 echo "1) Arch"
-echo "2) Debian"
-echo "3) Ubuntu"
-echo "4) Fedora"
+echo "2) Debian / Ubuntu"
+echo "3) Fedora"
 echo
 
 ### Getting Distro ###
 
-read -rp "Select [1-4]: " DISTRO
+read -rp "Select [1-3]: " distro
 
-case "$DISTRO" in
-    1|2|3|4) ;;
+case "$distro" in
+    1)
+        distro_name="Arch"
+        ;;
+
+    2)
+        distro_name="Debian / Ubuntu"
+        ;;
+
+    3)
+        distro_name="Fedora"
+        ;;
+
     *)
-        echo "Invalid selection"
+        echo "Invalid selection."
         exit 1
         ;;
 esac
 
 ### Getting preferred size ###
 
-echo "Choose a Resolution:"
+echo
+echo "Preferred resolution:"
 echo "1) Small  (270x270px)"
 echo "2) Medium (540x540px)"
 echo "3) Large  (1080x1080px)"
@@ -86,85 +110,109 @@ size_select=${size_select:-1}
 case "$size_select" in
     1)
         theme="vega-small"
+        resolution="270x270px"
         ;;
+
     2)
         theme="vega-medium"
+        resolution="540x540px"
         ;;
+
     3)
         theme="vega-large"
+        resolution="1080x1080px"
+        ;;
+
+    *)
+        echo "Invalid selection. Defaulting to Small (270x270px)"
+        theme="vega-small"
+        resolution="270x270px"
+        ;;
+esac
+
+echo
+echo "==========="
+echo "  Summary  "
+echo "==========="
+echo
+echo "Distribution : $distro_name"
+echo "Resolution   : $resolution"
+echo
+
+read -rp "Continue with installation? [Y/n]: " confirm
+confirm=${confirm:-Y}
+
+case "$confirm" in
+    [Yy]|[Yy][Ee][Ss])
+        ;;
+    [Nn]|[Nn][Oo])
+        echo
+        echo "Installation cancelled."
+        exit 0
         ;;
     *)
-        echo "Invalid selection. Defaulting to Small (270x270)"
-        theme="vega-small"
+        echo
+        echo "Invalid choice. Installation cancelled."
+        exit 1
         ;;
 esac
 
 ### Starting Installation ###
 
-case $DISTRO in
+case $distro in
 
 ##############
 ###  Arch  ###
 ##############
 
         1)
-
             install_theme
-            plymouth-set-default-theme -R "$theme"
-            echo
-            echo "Setting Theme as Default"
-            echo
+                plymouth-set-default-theme "$theme"
 
-create_new_initramfs
+                echo
+                echo "Setting Theme as Default"
+                echo
+
+            create_new_initramfs
 ;;
 
 ##############
-### DEBIAN ###
+### Debian ###
 ##############
 
         2)
-
             install_theme
-            update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/"$theme"/"$theme".plymouth 100
-            echo "Running update-alternatives"
-            echo
-            echo "Please choose the number corresponding to the installed theme."
-            echo 
-            update-alternatives --config default.plymouth
+                update-alternatives \
+                    --install \
+                    /usr/share/plymouth/themes/default.plymouth \
+                    default.plymouth \
+                    /usr/share/plymouth/themes/"$theme"/"$theme".plymouth \
+                    100
 
-create_new_initramfs
-;;
+                echo    
+                echo "Running update-alternatives"
+                echo
+                echo "Please choose the number corresponding to the installed theme."
+                echo
 
-##############
-### Ubuntu ###
-##############
+                update-alternatives --config default.plymouth
 
-        3)
-
-            install_theme
-            update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/"$theme"/"$theme".plymouth 100    
-            echo "Running update-alternatives"
-            echo                
-            echo "Please choose the number corresponding to the installed theme."
-            echo 
-            update-alternatives --config default.plymouth
-
-create_new_initramfs
+            create_new_initramfs
 ;;
 
 ##############
 ### Fedora ###
 ##############
 
-        4)
-
+        3)
             install_theme
-            plymouth-set-default-theme "$theme" -R
-            echo
-            echo "Setting Theme as Default"
-            echo
+                plymouth-set-default-theme "$theme"
 
-create_new_initramfs
+                echo
+                echo "Setting Theme as Default"
+                echo
+
+            create_new_initramfs
 ;;
 
 esac

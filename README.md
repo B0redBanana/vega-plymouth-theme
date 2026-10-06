@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-A Plymouth boot splash theme using <a href="https://steamcommunity.com/groups/VEGA-Gaming-Group">VEGA's</a> logo.
+A simple Plymouth boot splash theme featuring <a href="https://steamcommunity.com/groups/VEGA-Gaming-Group">VEGA's</a> logo.
 <strong>Preview</strong><br>
 
 <img src="https://github.com/B0redBanana/vega-plymouth/blob/8697b7d5202bf335ef6f1677ece687d5e6515028/preview/logo.gif" alt="preview gif">
@@ -19,13 +19,11 @@ A Plymouth boot splash theme using <a href="https://steamcommunity.com/groups/VE
 
 ## Prerequisites
 
-To use the theme, you need to have Plymouth installed and configured on your system. For help with that, please refer to your distribution's wiki.
+To use the theme, you need to have Plymouth installed and configured on your system. If it isn't already installed and configured, consult your distribution's documentation. For example:
 
 - [ArchWiki: Plymouth](https://wiki.archlinux.org/title/Plymouth) 
 
 - [Ubuntu Wiki: Plymouth](https://wiki.ubuntu.com/Plymouth)
-
-Fedora users can also refer to the ArchWiki.
 
 ## Download
 
@@ -89,19 +87,31 @@ sudo update-alternatives --config default.plymouth
 
 4. Update your initramfs (use the one for your system):
 
+*Arch Linux*
 ```bash 
 sudo mkinitcpio -P
 ```
+*Debian / Ubuntu*
 ```bash 
 sudo update-initramfs -u
 ```
+*Fedora*
 ```bash 
 sudo dracut -f
 ```
 
-## Important Notes
+## Compatibility & Testing
 
-+ This was created with resolution of 1920x1080
-+ Since this is my first Bash script, feedback is welcome.
-+ I have not tested this on a LUKS encrypted drive yet
-+ This is my first actual GitHub project, so if anyone has tips and feedback and how to properly do things, please let me know :)
+The theme has currently been tested on:
+
+- Linux Mint 22.3
+- Fedora 44
+- Manjaro 26.1
+
+Tested resolution:
+
+- 1920×1080
+
+
+
+### This is my first actual GitHub project, so if anyone has tips and feedback and how to properly do things, please let me know :)
