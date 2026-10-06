@@ -59,9 +59,8 @@ echo
 
 echo "Please choose your Distribution:"
 echo "1) Arch"
-echo "2) Debian"
-echo "3) Ubuntu"
-echo "4) Fedora"
+echo "2) Debian / Ubuntu"
+echo "3) Fedora"
 echo
 
 ### Getting Distro ###
@@ -69,7 +68,7 @@ echo
 read -rp "Select [1-4]: " DISTRO
 
 case "$DISTRO" in
-    1|2|3|4) ;;
+    1|2|3) ;;
     *)
         echo "Invalid selection"
         exit 1
@@ -124,7 +123,7 @@ create_new_initramfs
 ;;
 
 ##############
-### DEBIAN ###
+### Debian ###
 ##############
 
         2)
@@ -141,27 +140,10 @@ create_new_initramfs
 ;;
 
 ##############
-### Ubuntu ###
-##############
-
-        3)
-
-            install_theme
-            update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/"$theme"/"$theme".plymouth 100    
-            echo "Running update-alternatives"
-            echo                
-            echo "Please choose the number corresponding to the installed theme."
-            echo 
-            update-alternatives --config default.plymouth
-
-create_new_initramfs
-;;
-
-##############
 ### Fedora ###
 ##############
 
-        4)
+        3)
 
             install_theme
             plymouth-set-default-theme "$theme"
