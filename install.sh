@@ -25,10 +25,13 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
                     echo "Refreshing initramfs"
                     
                     if command -v update-initramfs &>/dev/null; then
-                        update-initramfs -u 
+                        echo "Using update-initramfs..."
+                        update-initramfs -u
                     elif command -v mkinitcpio &>/dev/null; then
+                        echo "Using mkinitcpio..."
                         mkinitcpio -P
                     elif command -v dracut &>/dev/null; then
+                        echo "Using dracut..."
                         dracut -f
                     else
                         echo "Error: Could not rebuild initramfs!"
@@ -57,7 +60,7 @@ echo "  VEGA Plymouth Theme Installer  "
 echo "================================="
 echo
 
-echo "Please choose your Distribution:"
+echo "Choose your Distribution:"
 echo "1) Arch"
 echo "2) Debian / Ubuntu"
 echo "3) Fedora"
@@ -65,7 +68,7 @@ echo
 
 ### Getting Distro ###
 
-read -rp "Select [1-4]: " distro
+read -rp "Select [1-3]: " distro
 
 case "$distro" in
     1|2|3) ;;
@@ -77,7 +80,8 @@ esac
 
 ### Getting preferred size ###
 
-echo "Choose a Resolution:"
+echo
+echo "Preferred resolution:"
 echo "1) Small  (270x270px)"
 echo "2) Medium (540x540px)"
 echo "3) Large  (1080x1080px)"
@@ -112,7 +116,6 @@ case $distro in
 ##############
 
         1)
-
             install_theme
             plymouth-set-default-theme "$theme"
             echo
@@ -127,7 +130,6 @@ create_new_initramfs
 ##############
 
         2)
-
             install_theme
             update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/"$theme"/"$theme".plymouth 100
             echo "Running update-alternatives"
@@ -144,9 +146,8 @@ create_new_initramfs
 ##############
 
         3)
-
             install_theme
-            plymouth-set-default-theme "$theme"
+            plymouth-set-default-theme "$theme"            
             echo
             echo "Setting Theme as Default"
             echo
