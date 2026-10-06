@@ -22,17 +22,22 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 #################
 
                 create_new_initramfs() {
-                    echo "Refreshing Initramfs"
+                    echo "Refreshing initramfs"
                     
                     if command -v update-initramfs &>/dev/null; then
-                            update-initramfs -u &>/dev/null  
-                            elif command -v mkinitcpio &>/dev/null; then
-                            mkinitcpio -P &>/dev/null
-                            elif command -v dracut &>/dev/null; then
-                            dracut -f &>/dev/null
-                            else
-                        echo "Warning: Could not rebuild initramfs!"
+                        update-initramfs -u 
+                    elif command -v mkinitcpio &>/dev/null; then
+                        mkinitcpio -P
+                    elif command -v dracut &>/dev/null; then
+                        dracut -f
+                    else
+                        echo "Error: Could not rebuild initramfs!"
+                        exit 1
                     fi
+
+                        echo
+                        echo "Initramfs successfully rebuilt."
+
                 }
 
                 install_theme() {
@@ -110,7 +115,7 @@ case $DISTRO in
         1)
 
             install_theme
-            plymouth-set-default-theme -R "$theme"
+            plymouth-set-default-theme "$theme"
             echo
             echo "Setting Theme as Default"
             echo
@@ -159,7 +164,7 @@ create_new_initramfs
         4)
 
             install_theme
-            plymouth-set-default-theme "$theme" -R
+            plymouth-set-default-theme "$theme"
             echo
             echo "Setting Theme as Default"
             echo
